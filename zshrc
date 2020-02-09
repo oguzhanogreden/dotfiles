@@ -115,3 +115,8 @@ unset __conda_setup
 
 # Environment variables
 source ~/.sh_variables
+
+# Make git and other software use vim
+# https://stackoverflow.com/a/2596835
+export VISUAL=vim
+export EDITOR="$VISUAL"
