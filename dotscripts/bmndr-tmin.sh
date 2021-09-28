@@ -13,7 +13,7 @@
 #          http://creativecommons.org/licenses/by-nc-sa/4.0/
 #          Copyright 2017 Philip Hellyer
 
-. ~/bmndrrc 2> /dev/null
+. ~/.bmndrrc 2> /dev/null
 
 # Goal lists
 echo 'Fetching goals'

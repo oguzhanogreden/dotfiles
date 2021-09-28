@@ -1,0 +1,46 @@
+# ParkBee stuff
+alias k8p="kubectx prod"
+
+## Puppeteer 
+export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+export PUPPETEER_EXECUTABLE_PATH=`which chromium`
+
+# alias k8pp="kubectx preprod"
+k8pp() {
+    eval "kubectx preprod"
+}
+
+alias kgpt="k8pp && kubectl get pods -n test"
+alias kgpu="k8pp && kubectl get pods -n uat"
+alias kgpp="k8p && kubectl get pods -n prod"
+
+# Run Docker images that are needed for locally running services
+alias dmes="docker run -d --rm -p 5672:5672 -p 15672:15672 --hostname localhost -e RABBITMQ_DEFAULT_USER=guest -e RABBITMQ_DEFAULT_PASS=guest --name rabbitmq rabbitmq:3-management"
+alias dred="docker run -d --rm --name redis -p 6379:6379 redis"
+# Run local MongoDB instance
+alias mong="mongod --dbpath /usr/local/var/mongodb 1> /dev/null &"
+
+# Alias opening configuration files
+sprod() {
+    eval "sops $(python3 ~/.dotscripts/parkbee/get_secrets_path.py --env prod secrets.yaml)"
+}
+suat() {
+    eval "sops $(python3 ~/.dotscripts/parkbee/get_secrets_path.py --env uat secrets.yaml)"
+}
+stest() {
+    eval "sops $(python3 ~/.dotscripts/parkbee/get_secrets_path.py --env test secrets.yaml)"
+    
+}
+
+vglob() {
+    eval "vim $(python3 ~/.dotscripts/parkbee/get_secrets_path.py values.yaml)"
+}
+vprod() {
+    eval "vim $(python3 ~/.dotscripts/parkbee/get_secrets_path.py --env prod values.yaml)"
+}
+vuat() {
+    eval "vim $(python3 ~/.dotscripts/parkbee/get_secrets_path.py --env uat values.yaml)"
+}
+vtest() {
+    eval "vim $(python3 ~/.dotscripts/parkbee/get_secrets_path.py --env test values.yaml)"
+}

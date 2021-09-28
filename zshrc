@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/ozanogreden/.oh-my-zsh"
+export ZSH="/Users/oguzhanogreden/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -100,14 +100,14 @@ source $ZSH/oh-my-zsh.sh
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/ozanogreden/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$('/Users/oguzhanogreden/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/home/ozanogreden/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/ozanogreden/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "/Users/oguzhanogreden/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/oguzhanogreden/anaconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/home/ozanogreden/miniconda3/bin:$PATH"
+        export PATH="/Users/oguzhanogreden/anaconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -120,3 +120,51 @@ source ~/.sh_variables
 # https://stackoverflow.com/a/2596835
 export VISUAL=vim
 export EDITOR="$VISUAL"
+
+# Dotnet stuff
+# Add .NET Core SDK tools
+export PATH="$PATH:/Users/oguzhanogreden/.dotnet/tools"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/oguzhanogreden/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/oguzhanogreden/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/oguzhanogreden/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/oguzhanogreden/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+
+# Add Homebrew'd Python
+# export PATH="/usr/local/opt/python@3.8/bin:$PATH"
+export PATH="$PATH:/Users/oguzhanogreden/Library/Python/3.8/bin"
+
+# Upon installing ruby-build, Homebrew said:
+## ==> ruby-build
+## ruby-build installs a non-Homebrew OpenSSL for each Ruby version installed and these are never upgraded.
+
+## To link Rubies to Homebrew's OpenSSL 1.1 (which is upgraded) add the following
+## to your ~/.zshrc:
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+
+## rbenv init said:
+# Load rbenv automatically by appending
+# the following to ~/.zshrc:
+eval "$(rbenv init -)"
+
+## gem install said:
+## WARNING:  You don't have /Users/oguzhanogreden/.gem/ruby/2.7.0/bin in your PATH,
+## gem executables will not run.
+PATH="$HOME/.gem/ruby/2.7.0/bin:$PATH"
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+## Aliases
+alias gbsd="git branch --all --sort=-committerdate"
+chmod +x ~/.dotscripts/create-notebook-post.py
+alias jp="python3 ~/.dotscripts/create-notebook-post.py"
+
+## Blogging
+alias jpp="bundle exec jekyll build && cd ../ogreden.com && git add . && git commit -m 'update' && git push && cd ../oguzhanogreden.com_source"
+
+### Dotnet stuf
+alias drp="dotnet run --project"
+
+source ~/.zshrc.parkbee
+export PATH="/usr/local/opt/helm@2/bin:$PATH"
+
