@@ -166,6 +166,7 @@ alias jpp="bundle exec jekyll build && cd ../ogreden.com && git add . && git com
 alias drp="dotnet run --project"
 
 source ~/.zshrc.parkbee
+source ~/.zshrc.taskwarrior
 export PATH="/usr/local/opt/helm@2/bin:$PATH"
 
 ## Terraform autocomplete
