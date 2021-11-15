@@ -18,7 +18,7 @@
 [core]
 	excludesfile = /Users/oguzhanogreden/.gitignore_global
 	editor = vim
-	autocrlf = false
+	autocrlf = input
 [credential]
 	helper = osxkeychain
 [user]
@@ -28,3 +28,7 @@
 	logline = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 [diff "sopsdiffer"]
 	textconv = sops -d
+[alias]
+        ignore = !git update-index --assume-unchanged 
+        unignore = !git update-index --no-assume-unchanged
+        ignored = !git ls-files -v | grep ^[a-z]

@@ -21,3 +21,7 @@ Therefore the reminder below:
 1. Install rcm.
 2. Clone git repository.
 3. Run `rcup -x README.md -x worksapce.code-workspace `
+
+## macOS
+
+- Install gnu-sed: `https://formulae.brew.sh/formula/gnu-sed`

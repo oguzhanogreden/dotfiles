@@ -39,7 +39,14 @@ call vundle#end()            " required
 filetype plugin indent on    " required
 
 " Enable relative numbers by default, may help with navigation.
-set relativenumber
+" set relativenumber
+:set number
+
+:augroup numbertoggle
+:  autocmd!
+:  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
+:  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
+:augroup END
 set ruler
 
 set linebreak
@@ -65,3 +72,9 @@ filetype plugin indent on
 setl foldmethod=expr
 setl foldexpr=riv#fold#expr(v:lnum)
 setl foldtext=riv#fold#text()
+
+" Tips end
+"
+" When I open markdown, all text is collapsed
+" https://vi.stackexchange.com/a/4494
+set nofoldenable

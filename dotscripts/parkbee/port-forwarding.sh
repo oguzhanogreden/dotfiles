@@ -15,11 +15,10 @@ echo "Forwarding ports..."
 
 # kubectl port-forward service/abproxy  5100:80 -n test &
 kubectl port-forward service/api-client-management-test 5101:80 -n test &
-# kubectl port-forward service/api-documentation-test 5102:80 -n test &
-kubectl port-forward service/api-test 5102:443 -n test & ## it looks like this may be ssl also internally
+kubectl port-forward service/api-test 5102:5000 -n test & ## it looks like this may be ssl also internally
 kubectl port-forward service/authentication-test 5103:80 -n test &
 kubectl port-forward service/authorization-test 5104:80 -n test &
-kubectl port-forward service/availability-test 5105:80 -n test &
+# kubectl port-forward service/availability-test 5105:80 -n test &
 # kubectl port-forward service/availability-test-scheduler 5106:80 -n test &
 # kubectl port-forward service/camera-acl-pusher-test 5107:80 -n test &
 # kubectl port-forward service/camera-data-scraper-test 5108:80 -n test &
@@ -61,7 +60,7 @@ kubectl port-forward service/prepaid-service-test 5143:80 -n test &
 kubectl port-forward service/pricing-test 5144:80 -n test &
 # kubectl port-forward service/productpage 5145:80 -n test &
 # kubectl port-forward service/ratings 5146:80 -n test &
-# kubectl port-forward service/revenue-service-test 5147:80 -n test &
+kubectl port-forward service/revenue-service-test 5147:80 -n test &
 # kubectl port-forward service/reviews 5148:80 -n test &
 kubectl port-forward service/savant-api-test 5149:80 -n test &
 kubectl port-forward service/savant-test 5150:80 -n test &
@@ -84,5 +83,9 @@ kubectl port-forward service/availability-test-mongodb 5300:27017 -n test &
 kubectl port-forward service/go-service-test-mongodb 5301:27017 -n test &
 kubectl port-forward service/discount-service-test-mongodb 5302:27017 -n test &
 kubectl port-forward service/garage-access-service-test-mongodb 5303:27017 -n test &
+kubectl port-forward service/user-management-service-test-mongodb 5304:27017 -n test &
+kubectl port-forward service/revenue-service-test-mongodb 5305:27017 -n test &
+kubectl port-forward service/invoicing-test-mongodb 5306:27017 -n test &
+kubectl port-forward service/subscriptions-test-mongodb -n test 5307:27017
 
 wait

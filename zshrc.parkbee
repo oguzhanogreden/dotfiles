@@ -1,3 +1,6 @@
+# Set environment variables
+source ~/.dotscripts/parkbee/net-env-test.sh
+
 # ParkBee stuff
 alias k8p="kubectx prod"
 
@@ -11,6 +14,7 @@ k8pp() {
 }
 
 alias kgpt="k8pp && kubectl get pods -n test"
+alias kgpt2="k8pp && kubectl get pods -n test2"
 alias kgpu="k8pp && kubectl get pods -n uat"
 alias kgpp="k8p && kubectl get pods -n prod"
 
@@ -43,4 +47,8 @@ vuat() {
 }
 vtest() {
     eval "vim $(python3 ~/.dotscripts/parkbee/get_secrets_path.py --env test values.yaml)"
+}
+
+gcof() {
+	eval "gco feature/$1"
 }
