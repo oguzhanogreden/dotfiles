@@ -1,0 +1,23 @@
+{
+  "name": "beeminder-weekly",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/main.js",
+  "scripts": {
+    "run": "tsc && node dist/main.js"
+  },
+  "keywords": [
+    "beeminder"
+  ],
+  "author": "Ozan Öğreden",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^16.11.9",
+    "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "beeminder": "^1.7.0",
+    "rxjs": "^7.4.0",
+    "tslint": "^6.1.3"
+  }
+}
