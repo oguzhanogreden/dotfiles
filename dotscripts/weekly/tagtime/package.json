@@ -1,0 +1,23 @@
+{
+  "name": "tagtime",
+  "version": "0.0.1",
+  "description": "Tagtime Weekly",
+  "main": "dist/index.js",
+  "scripts": {
+    "run": "tsc && node dist/main.js"
+  },
+  "keywords": [
+    "tagtime"
+  ],
+  "author": "Ozan Öğreden",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^16.11.9",
+    "husky": "^7.0.4",
+    "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "rxjs": "^7.4.0",
+    "tslint": "^6.1.3"
+  }
+}
