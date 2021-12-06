@@ -35,6 +35,7 @@ type GoalResponse = {
   slug: GoalSlug;
   rate: number;
   runits: GoalRateUnits;
+  title: string;
 };
 
 export type GoalRate = {
@@ -44,6 +45,7 @@ export type GoalRate = {
 export type Goal = {
   slug: GoalSlug;
   rate: GoalRate;
+  title: string;
 };
 
 let _goalDataStream = new ReplaySubject<GoalResponse>();
@@ -66,6 +68,7 @@ export const goalDataStream$ = _goalDataStream.pipe(
         unit: response.runits,
       },
       slug: response.slug,
+        title: response.title,
     } as Goal;
   })
 );

@@ -1,10 +1,10 @@
-import { map } from "rxjs";
+import { filter, map, scan } from "rxjs";
 import {
   Goal,
   goalDataRequested$,
   goalDataStream$,
   userDataRequested$,
-  userDataStream$,
+  userDataStream$
 } from "./beeminder";
 
 userDataStream$.pipe(map((user) => user.goals)).subscribe((x) => {
@@ -12,9 +12,15 @@ userDataStream$.pipe(map((user) => user.goals)).subscribe((x) => {
 });
 userDataRequested$.next(null);
 
-const weeklyRateStream = goalDataStream$
-  .pipe(map(goalAtWeeklyRate))
-  .subscribe();
+const timeCommitmentStream$ = goalDataStream$
+.pipe(
+  filter(x => x.title.indexOf("⏲") !== -1),
+  filter(x => x.title.indexOf("🐝") === -1), // filter out work
+  map(goalAtWeeklyRate),
+  scan((total, goal) => total + goal.rate.value, 0),
+)
+.subscribe(x => console.log(`Your weekly commitment is ${x} hours.`));
+
 
 function goalAtWeeklyRate(g: Goal): Goal {
   if (g.rate.unit === "w") {
