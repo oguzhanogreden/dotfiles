@@ -4,7 +4,7 @@ import {
   goalDataRequested$,
   goalDataStream$,
   userDataRequested$,
-  userDataStream$
+  userDataStream$,
 } from "./beeminder";
 
 userDataStream$.pipe(map((user) => user.goals)).subscribe((x) => {
@@ -13,16 +13,15 @@ userDataStream$.pipe(map((user) => user.goals)).subscribe((x) => {
 userDataRequested$.next(null);
 
 const timeCommitmentStream$ = goalDataStream$
-.pipe(
-  filter(x => x.title.indexOf("⏲") !== -1),
-  filter(x => x.title.indexOf("🐝") === -1), // filter out work
-  map(goalAtWeeklyRate),
-  scan((total, goal) => total + goal.rate.value, 0),
-)
-.subscribe(x => console.log(`Your weekly commitment is ${x} hours.`));
+  .pipe(
+    filter((x) => x.title.indexOf("⏲") !== -1),
+    filter((x) => x.title.indexOf("🐝") === -1), // filter out work
+    map(goalAtWeeklyRateInHours),
+    scan((total, goal) => total + goal.rate.value, 0)
+  )
+  .subscribe((x) => console.log(`Your weekly commitment is ${x} hours.`));
 
-
-function goalAtWeeklyRate(g: Goal): Goal {
+function goalAtWeeklyRateInHours(g: Goal): Goal {
   if (g.rate.unit === "w") {
     return g;
   }
@@ -43,9 +42,17 @@ function goalAtWeeklyRate(g: Goal): Goal {
       break;
   }
 
+  let goalUnitIsMinutes = g.rate.gunit === "minute";
+
+  if (goalUnitIsMinutes) {
+    g.rate.value = g.rate.value / 60;
+    g.rate.gunit = "hours";
+  }
+
   g.rate = {
     unit: "w",
     value: g.rate.value * multiplier,
+    gunit: g.rate.gunit,
   };
 
   return g;

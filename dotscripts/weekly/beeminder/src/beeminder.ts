@@ -3,7 +3,7 @@ import { AsyncSubject, map, ReplaySubject, Subject } from "rxjs";
 // @ts-nocheck
 var beeminder = require("beeminder");
 
-const TOKEN = "";
+const TOKEN = "zTirekcoxzqDE43XA2om";
 var bm = beeminder(TOKEN);
 
 // USER DATA
@@ -36,11 +36,13 @@ type GoalResponse = {
   rate: number;
   runits: GoalRateUnits;
   title: string;
+  gunits: string;
 };
 
 export type GoalRate = {
   value: number;
   unit: GoalRateUnits;
+  gunit: string;
 };
 export type Goal = {
   slug: GoalSlug;
@@ -62,13 +64,23 @@ function getGoal(goalName: GoalSlug) {
 export const goalDataRequested$ = new Subject<GoalSlug>();
 export const goalDataStream$ = _goalDataStream.pipe(
   map((response) => {
+    // if (response.slug === 'beard') {
+    //   console.log(response)
+    // }
+    // if (response.slug === 'reading') {
+    //   console.log(response)
+    // }
+
+    // console.log
+
     return {
       rate: {
         value: response.rate,
         unit: response.runits,
+        gunit: response.gunits,
       },
       slug: response.slug,
-        title: response.title,
+      title: response.title,
     } as Goal;
   })
 );
