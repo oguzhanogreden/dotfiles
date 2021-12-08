@@ -3,7 +3,10 @@ import { AsyncSubject, map, ReplaySubject, Subject } from "rxjs";
 // @ts-nocheck
 var beeminder = require("beeminder");
 
-const TOKEN = "zTirekcoxzqDE43XA2om";
+const TOKEN = process.env.BEEMINDER_TOKEN;
+if (!TOKEN) {
+  throw new Error("BEEMINDER_TOKEN is not set.")
+}
 var bm = beeminder(TOKEN);
 
 // USER DATA
