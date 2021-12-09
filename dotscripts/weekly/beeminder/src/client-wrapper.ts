@@ -1,13 +1,24 @@
 import { GoalSlug } from "beeminder-weekly/beeminder";
 import { map, ReplaySubject, shareReplay, Subject } from "rxjs";
-import { Goal, GoalResponse, User } from "./beeminder";
 
 var _beeminder = require("beeminder");
 
-type Callback<T> = (err: any, result: T) => void;
-type IClient = {
-  getUser: (cb: Callback<User>) => void;
-  getGoal: (goalName: string, cb: Callback<GoalResponse>) => void;
+export type Goal = {
+  slug: string;
+  rate: GoalRate;
+  title: string;
+};
+
+export type GoalRate = {
+  value: number;
+  unit: GoalRateUnits;
+  gunit: string;
+};
+
+export type GoalRateUnits = "y" | "m" | "w" | "d" | "h";
+
+export type User = {
+  goals: string[];
 };
 
 export class Client {
@@ -60,3 +71,18 @@ export class Client {
     this._userDataStream.next(result);
   }
 }
+
+type Callback<T> = (err: any, result: T) => void;
+
+type IClient = {
+  getUser: (cb: Callback<User>) => void;
+  getGoal: (goalName: string, cb: Callback<GoalResponse>) => void;
+};
+
+type GoalResponse = {
+  slug: string;
+  rate: number;
+  runits: GoalRateUnits;
+  title: string;
+  gunits: string;
+};
