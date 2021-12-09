@@ -1,18 +1,20 @@
 import { filter, map, scan } from "rxjs";
-import {
-  Goal,
-  goalDataRequested$,
-  goalDataStream$,
-  userDataRequested$,
-  userDataStream$,
-} from "./beeminder";
+import { Goal } from "./beeminder";
+import { Client } from "./client-wrapper";
 
-userDataStream$.pipe(map((user) => user.goals)).subscribe((x) => {
-  x.forEach((goalName) => goalDataRequested$.next(goalName));
+const TOKEN = process.env.BEEMINDER_TOKEN;
+if (!TOKEN) {
+  throw new Error("BEEMINDER_TOKEN is not set.");
+}
+
+var client = new Client(TOKEN);
+client.getGoalNames();
+
+client.userDataStream$.pipe(map((user) => user.goals)).subscribe((x) => {
+  x.forEach((goalName) => client.getGoalData(goalName));
 });
-userDataRequested$.next(null);
 
-const timeCommitmentStream$ = goalDataStream$
+const timeCommitmentStream$ = client.goalDataStream$
   .pipe(
     filter((x) => x.title.indexOf("⏲") !== -1),
     filter((x) => x.title.indexOf("🐝") === -1), // filter out work
