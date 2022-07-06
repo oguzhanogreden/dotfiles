@@ -3,11 +3,9 @@ import { createReadStream } from "fs";
 import { DateTime } from "luxon";
 import { createInterface } from "readline";
 import {
-  interval,
   map,
   pipe,
-  ReplaySubject, scan,
-  skip,
+  ReplaySubject, skip,
   Subject,
   takeUntil,
   tap
@@ -63,6 +61,8 @@ const parseRow = (bank: Bank) => {
 
           row = row.map(r => trimQuotes(r) ?? "");
 
+          // console.log(row[5] as INGTransactionType == "Bij" ? "TO" : "FROM")
+
           return {
             date: DateTime.fromFormat(row[0] ?? "", "yyyyMMdd"),
             account: row[2],
@@ -72,7 +72,7 @@ const parseRow = (bank: Bank) => {
               symbol: "€",
               errorOnInvalid: true,
             }),
-            type: row[5] as INGTransactionType === "Bij" ? "TO" : "FROM",
+            type: row[5] as INGTransactionType == "Bij" ? "TO" : "FROM",
             name: row[1],
             otherAccount: row[3],
             type2: row[4] as TransactionTypeAbbreviation,
@@ -142,6 +142,8 @@ type TransactionTypeAbbreviation = string;
 type TriodosTransactionType = "Debet" | "Credit";
 type INGTransactionType = "Af" | "Bij";
 
+type Category = "Groceries";
+
 type Transaction = {
   date: DateTime;
   account: IBAN;
@@ -150,25 +152,42 @@ type Transaction = {
   name: string;
   otherAccount: string;
   type2: TransactionTypeAbbreviation;
+  category?: Category;
 };
 
 class Budget {
-  private _income = 0;
+  private _income = currency(0);
   private _transactions = new ReplaySubject<Transaction>();
+  private _groceries = currency(0);
 
-  constructor() { }
+  constructor() {
+    // Income
+    this._transactions.pipe(
+      filter((t) => t.type == "TO"),
+    ).subscribe({
+      next: income => {
+        this._income = this._income.add(income.amount)
+      }
+    })
+
+    // Groceries
+    this._transactions.pipe(
+      filter((t) => t.category == 'Groceries'),
+    ).subscribe({
+      next: groceries => this._groceries = this._groceries.add(groceries.amount)
+    })
+  }
+
+  get income() {
+    return this._income;
+  }
+
+  get groceries() {
+    return this._groceries;
+  }
 
   processTransaction(t: Transaction) {
     this._transactions.next(t);
-  }
-
-  // TODO: Reactive refactor with: start and end date
-  get income() {
-    return this._transactions.pipe(
-      tap(t => console.log(t)),
-      filter((t) => t.type === "TO"),
-      scan((income, t) => income.add(t.amount), currency(0))
-    );
   }
 }
 
@@ -184,12 +203,26 @@ lineStream.on("close", () => {
   lineStream$.complete();
 });
 
+const categorizeTransactions = map<Transaction, Transaction>(t => {
+  return {
+    ...t,
+    category: t.name.includes("ALBERT HEIJN") ? "Groceries" : null
+  } as Transaction
+})
+// function categorizeTransactions(bank: Bank) {
+//   return pipe(
+//     map(t: Transac)
+//   );
+// }
+
 const dataEnded = new Subject();
 let bank: Bank = "ING";
 const dataStream$ = lineStream$.pipe(
   parseFile(bank),
   splitRow(bank),
   parseRow(bank),
+  categorizeTransactions,
+  // filter(t => t.category === "Groceries"),
   parseRowTests(),
   takeUntil(dataEnded)
   //   take(1)
@@ -201,8 +234,7 @@ dataStream$.subscribe({
   complete: () => console.log("dataStream$ completed")
 });
 
-const sampleTick$ = interval(10);
-
-budget.income
-  // .pipe(sample(sampleTick$))
-  .subscribe((i) => console.log(`Total: ${i.toString()}.`));
+setTimeout(() => {
+  console.log(budget.income)
+  console.log(budget.groceries)
+}, 50)
