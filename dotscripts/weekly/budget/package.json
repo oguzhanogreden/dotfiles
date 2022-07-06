@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "run": "tsc && node dist/index.js"
+    "run": "tsc && node dist/ing-groceries.js"
   },
   "author": "",
   "license": "ISC",
