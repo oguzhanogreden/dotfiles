@@ -3,14 +3,13 @@ import { createReadStream } from "fs";
 import { DateTime } from "luxon";
 import { createInterface } from "readline";
 import {
-  map,
-  pipe,
+  map, pipe,
   ReplaySubject, skip,
   Subject,
   takeUntil,
   tap
 } from "rxjs";
-import { filter } from "rxjs/operators";
+import { filter, last, scan } from "rxjs/operators";
 
 // TRIODOS
 function parseFile(bank: "ING" | "Triodos") {
@@ -36,7 +35,7 @@ function untilEndLine(endLine: string) {
 const splitRow = (bank: Bank) => pipe(map((row: string) => {
   switch (bank) {
     case 'ING':
-      return row.split(",");
+      return row.split('","'); // So that currencies are not split.
     case 'Triodos':
       return row.split(";")
   }
@@ -49,7 +48,7 @@ const parseRow = (bank: Bank) => {
     case 'ING':
       return pipe(
         map((row: string[]) => {
-          const MAX_ROW_LENGTH = 10;
+          const MAX_ROW_LENGTH = 9;
 
           const rowLength = row.length;
           if (rowLength > MAX_ROW_LENGTH) {
@@ -61,7 +60,6 @@ const parseRow = (bank: Bank) => {
 
           row = row.map(r => trimQuotes(r) ?? "");
 
-          // console.log(row[5] as INGTransactionType == "Bij" ? "TO" : "FROM")
 
           return {
             date: DateTime.fromFormat(row[0] ?? "", "yyyyMMdd"),
@@ -157,25 +155,23 @@ type Transaction = {
 
 class Budget {
   private _income = currency(0);
-  private _transactions = new ReplaySubject<Transaction>();
+  private _transactions$ = new ReplaySubject<Transaction>();
   private _groceries = currency(0);
 
   constructor() {
     // Income
-    this._transactions.pipe(
+    this._transactions$.pipe(
       filter((t) => t.type == "TO"),
     ).subscribe({
-      next: income => {
-        this._income = this._income.add(income.amount)
-      }
-    })
+      next: income => this._income = this._income.add(income.amount)
+    });
 
     // Groceries
-    this._transactions.pipe(
+    this._transactions$.pipe(
       filter((t) => t.category == 'Groceries'),
     ).subscribe({
       next: groceries => this._groceries = this._groceries.add(groceries.amount)
-    })
+    });
   }
 
   get income() {
@@ -187,7 +183,15 @@ class Budget {
   }
 
   processTransaction(t: Transaction) {
-    this._transactions.next(t);
+    this._transactions$.next(t);
+  }
+
+  complete() {
+    this._transactions$.complete();
+  }
+
+  getTransactions() {
+    return this._transactions$.asObservable();
   }
 }
 
@@ -209,11 +213,6 @@ const categorizeTransactions = map<Transaction, Transaction>(t => {
     category: t.name.includes("ALBERT HEIJN") ? "Groceries" : null
   } as Transaction
 })
-// function categorizeTransactions(bank: Bank) {
-//   return pipe(
-//     map(t: Transac)
-//   );
-// }
 
 const dataEnded = new Subject();
 let bank: Bank = "ING";
@@ -229,12 +228,62 @@ const dataStream$ = lineStream$.pipe(
 );
 
 const budget = new Budget();
-dataStream$.subscribe({
+dataStream$.pipe(
+  filter(t => t.date >= DateTime.fromObject({
+    year: 2022,
+    month: 7,
+    day: 1
+  })),
+).subscribe({
   next: (t) => budget.processTransaction(t),
-  complete: () => console.log("dataStream$ completed")
+  complete: () => budget.complete(),
 });
 
 setTimeout(() => {
-  console.log(budget.income)
-  console.log(budget.groceries)
+  // console.log(budget.income)
+  // console.log(budget.groceries)
 }, 50)
+
+type BeeminderDatapoint = {
+  timestamp: number,
+  value: number,
+  comment: string
+};
+budget.getTransactions().pipe(
+  filter(t => t.category === 'Groceries'),
+  map(t => {
+    return {
+      timestamp: t.date.toSeconds(),
+      value: t.amount.value,
+      comment: t.name
+    } as BeeminderDatapoint
+  }),
+  scan((acc, x) => [...acc, x], [] as Array<BeeminderDatapoint>),
+  last(),
+).subscribe(
+  {
+    next: dataPoints => {
+      const headers = new Headers();
+      headers.set("Content-Type", "application/x-www-form-urlencoded");
+
+      const authToken = process.env['BEEMINDER_TOKEN'];
+      if (!authToken) {
+        throw new Error("Environment variable BEEMINDER_TOKEN is not set.");
+      }
+
+      const params = new URLSearchParams();
+      params.set("auth_token", authToken);
+      params.set("datapoints", JSON.stringify(dataPoints));
+
+
+      fetch(
+        "https://www.beeminder.com/api/v1/users/oguzhanogreden/goals/weight/datapoints/create_all.json",
+        {
+          method: "POST",
+          headers: headers,
+          body: params
+        }
+      ).then(x => console.log(x))
+    },
+  }
+)
