@@ -1,0 +1,127 @@
+# espanso configuration file
+
+# This is the default configuration file, change it as you like it
+# You can refer to the official documentation:
+# https://espanso.org/docs/
+
+# Matches are the substitution rules, when you type the "trigger" string
+# it gets replaced by the "replace" string.
+matches:
+  # Simple text replacement
+  - trigger: ":espanso"
+    replace: "vi /Users/oguzhanogreden/Library/Preferences/espanso/default.yml"
+  - trigger: ":e2e"
+    replace: "end-to-end"
+  - trigger: ":imo"
+    replace: "in my opinion"
+  - trigger: ":Imo"
+    replace: "in my opinion"
+  - trigger: ":Btw"
+    replace: "By the way"
+  - trigger: ":btw"
+    replace: "by the way"
+  - trigger: ":lmk"
+    replace: "let me know"
+  - trigger: ":Lmk"
+    replace: "Let me know"
+  # # ParkBee Parallax stuff
+  - trigger: ":pblr" # line clean commit message
+    replace: "remove unnecessary empty line"
+  # Dates
+  - trigger: ":time"
+    replace: "{{currentTime}}"
+    vars:
+      - name: currentTime
+        type: date
+        params:
+          format: "%H:%M"
+  - trigger: ":date"
+    replace: "{{currentDate}}"
+    vars:
+      - name: currentDate
+        type: date
+        params:
+          format: "%m/%d/%Y"
+  - trigger: ":zttl"
+    replace: "{{zetteltimestamp}}"
+    vars:
+      - name: zetteltimestamp
+        type: date
+        params:
+          format: "%Y%m%d%H%M"
+  - trigger: ":zd"
+    replace: "{{date}}"
+    vars:
+      - name: date
+        type: date
+        params:
+          format: "%Y%m%d"
+  # Shell commands
+  - trigger: ":shell"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "echo Hello from your shell"
+  # Obsidian regex sort for Zettel UUIDs
+  - trigger: "§ts"
+    replace: "sort /\\[.*\\]/ r"
+  - trigger: ":afaik"
+    replace: "as far as I know," 
+  - trigger: ":Afaik"
+    replace: "As far as I know," 
+  - trigger: "afaict"
+    replace: "as far as I can tell," 
+  - trigger: ":Afaict"
+    replace: "As far as I can tell," 
+  - trigger: ":Iirc"
+    replace: "If I recall correctly," 
+  - trigger: ":iirc"
+    replace: "if I recall correctly," 
+  # Work
+  - trigger: ":gga"
+    replace: "Google Analytics"
+  # Parkbee
+  - trigger: ":pricingtask"
+    replace: "https://app.asana.com/0/1137482562012785/834141219197598"
+  - trigger: ":pfc"
+    replace: "ParkBee for Communities"
+  - trigger: ":cos"
+    replace: "Communities Service"
+  - trigger: ":gas"
+    replace: "Garage Access Service"
+  - trigger: ":gms"
+    replace: "Garage Management Service"
+  - trigger: ":gs"
+    replace: "Go Service"
+  - trigger: ":opa"
+    replace: "Owner Portal API"
+  - trigger: ":dk"
+    replace: "Digital Key"
+  - trigger: ":pbe"
+    replace: "ParkBee"
+  - trigger: ":pbg"
+    replace: "ParkBee GO"
+  - trigger: ":pbb"
+    replace: "ParkBee Business"
+  - trigger: ":mp"
+    replace: "Management Portal"
+  - trigger: ":ums"
+    replace: "User Management Service"
+  - trigger: ":cs"
+    replace: "Customer Support"
+  - trigger: ":prs"
+    replace: "Pricing Service"
+  - trigger: ":rs"
+    replace: "Revenue Service"
+  - trigger: ":dae"
+    replace: "Data Event Aggregator"
+  - trigger: ":ds"
+    replace: "Discount Service"
+  - trigger: ":AC"
+    replace: "Acceptance Criteria"
+  - trigger: ":pasa"
+    replace: "Partner Support API"
+  - trigger: ":passportinfo"
+    replace: "U10668025 / 20/03/2025 / TURKEY"
