@@ -1,0 +1,84 @@
+# espanso configuration file
+
+# This is the default configuration file, change it as you like it
+# You can refer to the official documentation:
+# https://espanso.org/docs/
+
+# Matches are the substitution rules, when you type the "trigger" string
+# it gets replaced by the "replace" string.
+matches:
+  # Simple text replacement
+  - trigger: ":e2e"
+    replace: "end-to-end"
+  - trigger: ":imo"
+    replace: "in my opinion"
+  - trigger: ":Imo"
+    replace: "in my opinion"
+  - trigger: ":Btw"
+    replace: "By the way"
+  - trigger: ":btw"
+    replace: "by the way"
+  - trigger: ":lmk"
+    replace: "let me know"
+  - trigger: ":Lmk"
+    replace: "Let me know"
+  # # ParkBee Parallax stuff
+  - trigger: ":pblr" # line clean commit message
+    replace: "remove unnecessary empty line"
+  # Dates
+  - trigger: ":time"
+    replace: "{{currentTime}}"
+    vars:
+      - name: currentTime
+        type: date
+        params:
+          format: "%H:%M"
+  - trigger: ":date"
+    replace: "{{currentDate}}"
+    vars:
+      - name: currentDate
+        type: date
+        params:
+          format: "%m/%d/%Y"
+  - trigger: ":zttl"
+    replace: "{{zetteltimestamp}}"
+    vars:
+      - name: zetteltimestamp
+        type: date
+        params:
+          format: "%Y%m%d%H%M"
+  - trigger: ":zd"
+    replace: "{{date}}"
+    vars:
+      - name: date
+        type: date
+        params:
+          format: "%Y%m%d"
+  # Shell commands
+  - trigger: ":shell"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "echo Hello from your shell"
+  # Obsidian regex sort for Zettel UUIDs
+  - trigger: "§ts"
+    replace: "sort /\\[.*\\]/ r"
+  - trigger: ":afaik"
+    replace: "as far as I know," 
+  - trigger: ":Afaik"
+    replace: "As far as I know," 
+  - trigger: "afaict"
+    replace: "as far as I can tell," 
+  - trigger: ":Afaict"
+    replace: "As far as I can tell," 
+  - trigger: ":Iirc"
+    replace: "If I recall correctly," 
+  - trigger: ":iirc"
+    replace: "if I recall correctly," 
+  # Work
+  - trigger: ":gga"
+    replace: "Google Analytics"
+  - trigger: ":passportinfo"
+    replace: "U10668025 / 20/03/2025 / TURKEY"
